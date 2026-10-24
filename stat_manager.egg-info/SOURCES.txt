@@ -1,0 +1,9 @@
+README.md
+pyproject.toml
+app/__init__.py
+app/config.py
+stat_manager.egg-info/PKG-INFO
+stat_manager.egg-info/SOURCES.txt
+stat_manager.egg-info/dependency_links.txt
+stat_manager.egg-info/requires.txt
+stat_manager.egg-info/top_level.txt

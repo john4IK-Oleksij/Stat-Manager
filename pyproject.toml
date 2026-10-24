@@ -1,17 +1,18 @@
 [project]
 name = "stat-manager"
 version = "0.1.0"
-description = "Add your description here"
+description = "Expense Tracker API"
 readme = "README.md"
-authors = [
-    { name = "Aleks", email = "alosi4ek@gmail.com" }
-]
 requires-python = ">=3.11"
-dependencies = []
-
-[project.scripts]
-stat-manager = "stat_manager:main"
+dependencies = [
+    "fastapi[standard]>=0.161.1",
+    "mysql-connector-python>=26.10.0",
+    "pydantic-settings>=2.16.1",
+]
 
 [build-system]
-requires = ["uv_build>=0.12.10,<0.13.0"]
-build-backend = "uv_build"
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["app"]

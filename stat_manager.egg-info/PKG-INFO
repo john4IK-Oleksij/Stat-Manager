@@ -1,0 +1,9 @@
+Metadata-Version: 2.4
+Name: stat-manager
+Version: 0.1.0
+Summary: Expense Tracker API
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: fastapi[standard]>=0.161.1
+Requires-Dist: mysql-connector-python>=26.10.0
+Requires-Dist: pydantic-settings>=2.16.1
