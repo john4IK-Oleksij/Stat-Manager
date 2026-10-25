@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Статистика — Expense Tracker</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+  <!-- Шапка сайту -->
+  <header class="app-header">
+    <div class="app-container header-inner">
+      <a href="index.html" class="header-brand">
+        <div class="header-logo-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="1" x2="12" y2="23"></line>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+        </div>
+        <span>Expense Tracker</span>
+      </a>
+
+      <!-- Бейдж успіху (зелений) -->
+      <div class="header-center">
+        <div id="headerSuccessBadge" class="header-success-badge" role="status" aria-live="polite">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span id="headerSuccessText">Дію успішно виконано</span>
+        </div>
+      </div>
+
+      <!-- Десктопне меню -->
+      <nav class="header-nav" aria-label="Основна навігація">
+        <a href="index.html" class="nav-link">Огляд</a>
+        <a href="expenses.html" class="nav-link">Витрати</a>
+        <a href="categories.html" class="nav-link">Категорії</a>
+        <a href="statistics.html" class="nav-link">Статистика</a>
+      </nav>
+
+      <!-- Бургер-кнопка -->
+      <button id="burgerBtn" class="burger-btn" aria-label="Відкрити меню" aria-expanded="false">
+        <span class="burger-line"></span>
+        <span class="burger-line"></span>
+        <span class="burger-line"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Мобільне меню -->
+  <div id="mobileNav" class="mobile-nav" aria-label="Мобільна навігація">
+    <a href="index.html" class="mobile-nav-link">Огляд</a>
+    <a href="expenses.html" class="mobile-nav-link">Витрати</a>
+    <a href="categories.html" class="mobile-nav-link">Категорії</a>
+    <a href="statistics.html" class="mobile-nav-link">Статистика</a>
+  </div>
+  <div id="navBackdrop" class="nav-backdrop"></div>
+
+  <!-- Основний контент -->
+  <main class="main-content">
+    <div class="app-container">
+      <div class="page-header">
+        <div class="page-title-group">
+          <h1>Статистика</h1>
+          <p class="page-subtitle">Аналітика та розподіл витрат за категоріями й часовими періодами</p>
+        </div>
+      </div>
+
+      <!-- Блок 1: Загальна статистика -->
+      <section class="stats-section" aria-labelledby="summaryStatsHeading">
+        <div class="stats-section-header">
+          <h2 id="summaryStatsHeading" class="stats-section-title">Загальна статистика</h2>
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <span class="kpi-label">Кількість витрат</span>
+            <span id="statExpensesCount" class="kpi-value">0</span>
+            <span class="kpi-subtext">Загальна кількість чеків</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Загальна сума</span>
+            <span id="statTotalAmount" class="kpi-value">0.00 ₴</span>
+            <span class="kpi-subtext">Всі витрати разом</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Середня витрата</span>
+            <span id="statAvgAmount" class="kpi-value">0.00 ₴</span>
+            <span class="kpi-subtext">Середнє значення</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Мінімальна витрата</span>
+            <span id="statMinAmount" class="kpi-value">0.00 ₴</span>
+            <span class="kpi-subtext">Найменший платіж</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Максимальна витрата</span>
+            <span id="statMaxAmount" class="kpi-value">0.00 ₴</span>
+            <span class="kpi-subtext">Найбільший платіж</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Блок 2: Статистика за категоріями -->
+      <section class="stats-section" aria-labelledby="categoryStatsHeading">
+        <div class="stats-section-header">
+          <h2 id="categoryStatsHeading" class="stats-section-title">Статистика за категоріями</h2>
+        </div>
+        <div class="two-col-grid">
+          <!-- Кільцева діаграма -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Розподіл за частками</h3>
+            </div>
+            <div class="card-body">
+              <div id="statCategoryDonutContainer" class="chart-wrapper">
+                <div class="placeholder-box">
+                  <div class="placeholder-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M12 2a10 10 0 0 1 10 10h-10z"></path>
+                    </svg>
+                  </div>
+                  <div class="empty-state-title">Діаграма часток</div>
+                  <div>Дані про частки категорій відсутні або очікують синхронізації</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Таблиця категорій -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Таблиця показників</h3>
+            </div>
+            <div class="card-body" style="padding: 0;">
+              <div class="table-container" style="border: none;">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Назва категорії</th>
+                      <th style="text-align: center;">К-сть</th>
+                      <th class="col-amount">Загалом</th>
+                      <th class="col-amount">Середня</th>
+                    </tr>
+                  </thead>
+                  <tbody id="statCategoryTableBody">
+                    <tr>
+                      <td colspan="4" class="empty-state">
+                        <div class="empty-state-title">Дані відсутні</div>
+                        <div>Завантаження статистики відбудеться в Ітерації 5</div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Блок 3: Статистика за місяцями -->
+      <section class="stats-section" aria-labelledby="monthStatsHeading">
+        <div class="stats-section-header">
+          <h2 id="monthStatsHeading" class="stats-section-title">Статистика за місяцями</h2>
+        </div>
+        <div class="two-col-grid">
+          <!-- Стовпчикова діаграма -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Щомісячна динаміка</h3>
+            </div>
+            <div class="card-body">
+              <div id="statMonthBarContainer" class="chart-wrapper">
+                <div class="placeholder-box">
+                  <div class="placeholder-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="18" y1="20" x2="18" y2="10"></line>
+                      <line x1="12" y1="20" x2="12" y2="4"></line>
+                      <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                  </div>
+                  <div class="empty-state-title">Місячна динаміка</div>
+                  <div>Дані за місяцями відсутні або очікують синхронізації</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Таблиця місяців -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Помісячний звіт</h3>
+            </div>
+            <div class="card-body" style="padding: 0;">
+              <div class="table-container" style="border: none;">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Місяць (YYYY-MM)</th>
+                      <th style="text-align: center;">Кількість витрат</th>
+                      <th class="col-amount">Загальна сума</th>
+                    </tr>
+                  </thead>
+                  <tbody id="statMonthTableBody">
+                    <tr>
+                      <td colspan="3" class="empty-state">
+                        <div class="empty-state-title">Дані відсутні</div>
+                        <div>Завантаження статистики відбудеться в Ітерації 5</div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Футер -->
+  <footer class="app-footer">
+    <div class="app-container footer-inner">
+      <span>Expense Tracker &copy; 2026. Працює на FastAPI + Vanilla JS.</span>
+      <span class="footer-divider">•</span>
+      <a href="http://127.0.0.1:8000/docs" target="_blank" rel="noopener noreferrer" class="footer-link" title="Відкрити Swagger UI (OpenAPI документація)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+        </svg>
+        Swagger (API Docs) ↗
+      </a>
+    </div>
+  </footer>
+
+  <!-- Модальні вікна (підтвердження та помилка) -->
+  <div id="confirmModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 id="confirmModalTitle" class="modal-title">Підтвердження дії</h3>
+        <button class="modal-close-btn" data-close-modal aria-label="Закрити">&times;</button>
+      </div>
+      <div id="confirmModalMessage" class="modal-body">
+        Видалити запис? Цю дію не можна скасувати.
+      </div>
+      <div class="modal-footer">
+        <button id="confirmModalCancelBtn" class="btn btn-outline" data-close-modal>Скасувати</button>
+        <button id="confirmModalOkBtn" class="btn btn-danger">Видалити</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="errorModal" class="modal-backdrop modal-error" role="dialog" aria-modal="true" aria-labelledby="errorModalTitle">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 id="errorModalTitle" class="modal-title">Помилка</h3>
+        <button class="modal-close-btn" data-close-modal aria-label="Закрити">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p id="errorModalMessage">Не вдалося виконати операцію.</p>
+        <div id="errorModalCode" class="badge badge-info" style="display: none; margin-top: 8px;"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" data-close-modal>Зрозуміло</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/components/header.js"></script>
+  <script src="js/components/notifications.js"></script>
+  <script src="js/components/modal.js"></script>
+  <script src="js/components/charts.js"></script>
+  <script src="js/components/health.js"></script>
+  <script src="js/pages/statistics.js"></script>
+</body>
+</html>

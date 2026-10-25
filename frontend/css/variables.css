@@ -1,0 +1,62 @@
+:root {
+  /* Головна палітра згідно з вимогами mission.md */
+  --color-primary: #D97724;        /* Помаранчевий (акценти, головні кнопки) */
+  --color-primary-hover: #BF6317;
+  --color-primary-light: #FDF3E7;
+  --color-secondary: #E8B547;      /* Темно-жовтий */
+  --color-secondary-hover: #D4A034;
+  --color-secondary-light: #FBF6E9;
+  --color-bg: #FFF8EC;             /* Кремовий фон */
+  --color-card-bg: #FFFFFF;        /* Білий для карток */
+  --color-text: #392719;           /* Темний текст */
+  --color-text-muted: #7A6657;     /* Приглушений текст */
+  --color-text-light: #9F8B7D;
+  --color-accent-blue: #2563A6;    /* Контрастний синій для посилань/дій */
+  --color-accent-blue-hover: #1C4D82;
+  --color-accent-blue-light: #EBF3FC;
+
+  /* Системні кольори */
+  --color-success: #2E7D32;        /* Зелений для успіху */
+  --color-success-bg: #E8F5E9;
+  --color-success-border: #A5D6A7;
+  --color-danger: #C62828;         /* Червоний для помилок/видалення */
+  --color-danger-hover: #A71D1D;
+  --color-danger-bg: #FFEBEE;
+  --color-danger-border: #FFCDD2;
+  --color-warning: #D97706;        /* Попередження */
+  --color-warning-bg: #FEF3C7;
+  --color-warning-border: #FDE68A;
+
+  /* Межі та розділювачі */
+  --color-border: #E8DFC8;
+  --color-border-subtle: #F3ECE0;
+
+  /* Шрифти та типографіка (всі розміри суворо в PX) */
+  --font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 32px;
+
+  /* Радіуси заокруглень */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* Тіні */
+  --shadow-sm: 0 1px 3px rgba(57, 39, 25, 0.06);
+  --shadow-md: 0 4px 14px rgba(57, 39, 25, 0.08);
+  --shadow-lg: 0 12px 28px rgba(57, 39, 25, 0.12);
+
+  /* Анімації */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+
+  /* Розмітка в PX */
+  --container-max-width: 1200px;
+  --header-height: 72px;
+}

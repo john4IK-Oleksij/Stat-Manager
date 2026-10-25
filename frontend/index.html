@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Огляд витрат — Expense Tracker</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+  <!-- Шапка сайту -->
+  <header class="app-header">
+    <div class="app-container header-inner">
+      <!-- Логотип -->
+      <a href="index.html" class="header-brand">
+        <div class="header-logo-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="1" x2="12" y2="23"></line>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+        </div>
+        <span>Expense Tracker</span>
+      </a>
+
+      <!-- Бейдж успіху (зелений) -->
+      <div class="header-center">
+        <div id="headerSuccessBadge" class="header-success-badge" role="status" aria-live="polite">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span id="headerSuccessText">Дію успішно виконано</span>
+        </div>
+      </div>
+
+      <!-- Десктопне меню -->
+      <nav class="header-nav" aria-label="Основна навігація">
+        <a href="index.html" class="nav-link">Огляд</a>
+        <a href="expenses.html" class="nav-link">Витрати</a>
+        <a href="categories.html" class="nav-link">Категорії</a>
+        <a href="statistics.html" class="nav-link">Статистика</a>
+      </nav>
+
+      <!-- Бургер-кнопка для мобільних пристроїв -->
+      <button id="burgerBtn" class="burger-btn" aria-label="Відкрити меню" aria-expanded="false">
+        <span class="burger-line"></span>
+        <span class="burger-line"></span>
+        <span class="burger-line"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Мобільне меню -->
+  <div id="mobileNav" class="mobile-nav" aria-label="Мобільна навігація">
+    <a href="index.html" class="mobile-nav-link">Огляд</a>
+    <a href="expenses.html" class="mobile-nav-link">Витрати</a>
+    <a href="categories.html" class="mobile-nav-link">Категорії</a>
+    <a href="statistics.html" class="mobile-nav-link">Статистика</a>
+  </div>
+  <div id="navBackdrop" class="nav-backdrop"></div>
+
+  <!-- Основний контент -->
+  <main class="main-content">
+    <div class="app-container">
+      <!-- Заголовок сторінки та швидкі дії -->
+      <div class="page-header">
+        <div class="page-title-group">
+          <h1>Огляд витрат</h1>
+          <p class="page-subtitle">Загальна зведення фінансів та останні витрати</p>
+        </div>
+        <div class="page-actions">
+          <a href="expenses.html#new" class="btn btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Додати витрату
+          </a>
+        </div>
+      </div>
+
+      <!-- Ключові показники (KPI Cards) -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <span class="kpi-label">Загальна сума</span>
+          <span id="kpiTotalAmount" class="kpi-value">0.00 ₴</span>
+          <span class="kpi-subtext">Дані за весь період</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">Кількість записів</span>
+          <span id="kpiExpensesCount" class="kpi-value">0</span>
+          <span class="kpi-subtext">Всього витрат</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">Середня витрата</span>
+          <span id="kpiAvgAmount" class="kpi-value">0.00 ₴</span>
+          <span class="kpi-subtext">На один запис</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">Мінімум / Максимум</span>
+          <span id="kpiMinMaxAmount" class="kpi-value">0 / 0 ₴</span>
+          <span class="kpi-subtext">Діапазон витрат</span>
+        </div>
+      </div>
+
+      <!-- Графіки: Категорії та Щомісячні витрати -->
+      <div class="dashboard-charts-grid">
+        <!-- Кільцева діаграма витрат за категоріями -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Витрати за категоріями</h2>
+          </div>
+          <div class="card-body">
+            <div id="donutChartContainer" class="chart-wrapper">
+              <div class="placeholder-box" style="width: 100%;">
+                <div class="placeholder-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M12 2a10 10 0 0 1 10 10h-10z"></path>
+                  </svg>
+                </div>
+                <div class="empty-state-title">Діаграма категорій</div>
+                <div>Дані про витрати відсутні або очікують синхронізації</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Стовпчикова діаграма за місяцями -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Витрати за місяцями</h2>
+          </div>
+          <div class="card-body">
+            <div id="barChartContainer" class="chart-wrapper">
+              <div class="placeholder-box" style="width: 100%;">
+                <div class="placeholder-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                </div>
+                <div class="empty-state-title">Місячна динаміка</div>
+                <div>Дані за місяцями відсутні або очікують синхронізації</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Останні витрати -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Останні витрати</h2>
+          <a href="expenses.html" class="btn btn-outline btn-sm">Переглянути всі</a>
+        </div>
+        <div class="card-body" style="padding: 0;">
+          <div class="table-container" style="border: none;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Дата</th>
+                  <th>Назва</th>
+                  <th>Категорія</th>
+                  <th style="text-align: right;">Сума</th>
+                </tr>
+              </thead>
+              <tbody id="recentExpensesTableBody">
+                <tr>
+                  <td colspan="4" class="empty-state">
+                    <div class="empty-state-title">Список останніх витрат порожній</div>
+                    <div>Дані будуть завантажені з бекенду після підключення API</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Футер -->
+  <footer class="app-footer">
+    <div class="app-container footer-inner">
+      <span>Expense Tracker &copy; 2026. Працює на FastAPI + Vanilla JS.</span>
+      <span class="footer-divider">•</span>
+      <a href="http://127.0.0.1:8000/docs" target="_blank" rel="noopener noreferrer" class="footer-link" title="Відкрити Swagger UI (OpenAPI документація)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+        </svg>
+        Swagger (API Docs) ↗
+      </a>
+    </div>
+  </footer>
+
+  <!-- Кастомне модальне вікно підтвердження видалення -->
+  <div id="confirmModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 id="confirmModalTitle" class="modal-title">Підтвердження дії</h3>
+        <button class="modal-close-btn" data-close-modal aria-label="Закрити">&times;</button>
+      </div>
+      <div id="confirmModalMessage" class="modal-body">
+        Видалити цю витрату? Цю дію не можна скасувати.
+      </div>
+      <div class="modal-footer">
+        <button id="confirmModalCancelBtn" class="btn btn-outline" data-close-modal>Скасувати</button>
+        <button id="confirmModalOkBtn" class="btn btn-danger">Видалити</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Кастомне модальне вікно помилки -->
+  <div id="errorModal" class="modal-backdrop modal-error" role="dialog" aria-modal="true" aria-labelledby="errorModalTitle">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 id="errorModalTitle" class="modal-title">Помилка</h3>
+        <button class="modal-close-btn" data-close-modal aria-label="Закрити">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p id="errorModalMessage">Не вдалося виконати операцію.</p>
+        <div id="errorModalCode" class="badge badge-info" style="display: none; margin-top: 8px;"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" data-close-modal>Зрозуміло</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/components/header.js"></script>
+  <script src="js/components/notifications.js"></script>
+  <script src="js/components/modal.js"></script>
+  <script src="js/components/charts.js"></script>
+  <script src="js/components/health.js"></script>
+  <script src="js/pages/dashboard.js"></script>
+</body>
+</html>
