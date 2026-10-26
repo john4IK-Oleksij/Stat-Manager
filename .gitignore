@@ -22,5 +22,3 @@ htmlcov/
 .DS_Store
 Thumbs.db
 
-# SSL certificates
-ca.pem
