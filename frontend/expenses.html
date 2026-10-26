@@ -142,8 +142,18 @@
 
         <!-- Пагінація -->
         <div class="card-footer pagination-bar">
-          <div class="pagination-info" id="paginationInfo">
-            Показано 0 записів
+          <div class="pagination-info-group" style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+            <div class="pagination-info" id="paginationInfo">
+              Показано 0 записів
+            </div>
+            <div class="per-page-selector" style="display: flex; align-items: center; gap: 8px;">
+              <label for="perPageSelect" style="font-size: 13px; color: var(--color-text-muted); font-weight: 500;">Показувати по:</label>
+              <select id="perPageSelect" class="form-select" style="padding: 4px 10px; font-size: 13px; width: auto; height: auto; border-radius: var(--radius-sm); cursor: pointer;">
+                <option value="10">10</option>
+                <option value="20" selected>20</option>
+                <option value="50">50</option>
+              </select>
+            </div>
           </div>
           <div class="pagination-controls">
             <button id="prevPageBtn" class="btn btn-outline btn-sm" disabled>&larr; Попередня</button>

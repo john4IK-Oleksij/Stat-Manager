@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Елементи DOM: Таблиця та Пагінація
   const tableBody = document.getElementById("expensesTableBody");
   const paginationInfo = document.getElementById("paginationInfo");
+  const perPageSelect = document.getElementById("perPageSelect");
   const prevPageBtn = document.getElementById("prevPageBtn");
   const nextPageBtn = document.getElementById("nextPageBtn");
   const currentPageBadge = document.getElementById("currentPageBadge");
@@ -37,7 +38,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Стан сторінки
   let categoriesMap = new Map();
   let currentPage = 1;
-  const limit = (window.APP_CONFIG && window.APP_CONFIG.DEFAULT_LIMIT) || 20;
+  let limit = (perPageSelect && parseInt(perPageSelect.value, 10)) || 20;
   let searchDebounceTimeout = null;
   let currentExpensesList = [];
   let allMonthFilteredExpenses = [];
@@ -422,6 +423,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (filterMonth) filterMonth.value = "";
     filterSortBy.value = "spent_on";
     filterOrder.value = "desc";
+    if (perPageSelect) {
+      perPageSelect.value = "20";
+      limit = 20;
+    }
     history.replaceState(null, "", "expenses.html");
     currentPage = 1;
     loadExpenses();
@@ -431,7 +436,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     resetFiltersBtn.addEventListener("click", resetAllFilters);
   }
 
-  // 4. Пагінація
+  // 4. Пагінація та вибір кількості записів на сторінку
+  if (perPageSelect) {
+    perPageSelect.addEventListener("change", () => {
+      limit = parseInt(perPageSelect.value, 10) || 20;
+      currentPage = 1;
+      if (allMonthFilteredExpenses.length > 0) {
+        const start = (currentPage - 1) * limit;
+        currentExpensesList = allMonthFilteredExpenses.slice(start, start + limit);
+        renderExpensesTable(currentExpensesList);
+        updatePaginationControls(currentExpensesList.length, allMonthFilteredExpenses.length, filterMonth.value);
+      } else {
+        loadExpenses();
+      }
+    });
+  }
+
   if (prevPageBtn) {
     prevPageBtn.addEventListener("click", () => {
       if (currentPage > 1) {
