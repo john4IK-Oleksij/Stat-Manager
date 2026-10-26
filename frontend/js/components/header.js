@@ -44,4 +44,12 @@ document.addEventListener("DOMContentLoaded", () => {
       link.classList.remove("active");
     }
   });
+
+  // Динамічне налаштування посилання на Swagger UI у футері відповідно до конфігурації API
+  const apiBase = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || "http://127.0.0.1:8000";
+  const docsUrl = apiBase ? (apiBase.replace(/\/+$/, "") + "/docs") : "/docs";
+  document.querySelectorAll('a[href*="/docs"]').forEach((link) => {
+    link.href = docsUrl;
+    link.title = `Відкрити Swagger UI (${docsUrl})`;
+  });
 });
