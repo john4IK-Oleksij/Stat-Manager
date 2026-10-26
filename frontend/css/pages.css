@@ -25,12 +25,18 @@
   padding: 20px;
   margin-bottom: 24px;
   display: grid;
-  grid-template-columns: 2fr 1.5fr 1fr 1fr auto;
+  grid-template-columns: minmax(180px, 1.8fr) minmax(140px, 1.3fr) minmax(130px, 1.2fr) minmax(110px, 1fr) minmax(110px, 1fr) auto;
   gap: 16px;
   align-items: flex-end;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1050px) {
+  .filters-bar {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
   .filters-bar {
     grid-template-columns: 1fr 1fr;
   }
@@ -40,6 +46,46 @@
   .filters-bar {
     grid-template-columns: 1fr;
   }
+}
+
+.active-filters-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 10px 16px;
+  background-color: var(--color-card-bg);
+  border: 1px dashed var(--color-primary);
+  border-radius: var(--radius-md);
+  margin-bottom: 16px;
+}
+
+.active-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--color-secondary-light);
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+}
+
+.active-filter-remove {
+  background: none;
+  border: none;
+  color: var(--color-danger);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
 }
 
 .pagination-bar {
@@ -87,8 +133,9 @@
 
 .categories-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 20px;
+  width: 100%;
 }
 
 .category-card {
@@ -117,7 +164,7 @@
 
 .category-name {
   font-size: var(--font-size-lg);
-  font-weight: 700;
+  font-weight: 600;
   color: var(--color-text);
   word-break: break-word;
 }
@@ -147,7 +194,7 @@
 
 .stats-section-title {
   font-size: var(--font-size-xl);
-  font-weight: 700;
+  font-weight: 600;
   color: var(--color-text);
 }
 

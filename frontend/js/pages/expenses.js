@@ -5,9 +5,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Елементи DOM: Фільтри
   const filterSearch = document.getElementById("filterSearch");
   const filterCategory = document.getElementById("filterCategory");
+  const filterMonth = document.getElementById("filterMonth");
   const filterSortBy = document.getElementById("filterSortBy");
   const filterOrder = document.getElementById("filterOrder");
   const resetFiltersBtn = document.getElementById("resetFiltersBtn");
+  const activeFiltersBadgeBar = document.getElementById("activeFiltersBadgeBar");
 
   // Елементи DOM: Таблиця та Пагінація
   const tableBody = document.getElementById("expensesTableBody");
@@ -38,6 +40,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const limit = (window.APP_CONFIG && window.APP_CONFIG.DEFAULT_LIMIT) || 20;
   let searchDebounceTimeout = null;
   let currentExpensesList = [];
+  let allMonthFilteredExpenses = [];
 
   function escapeHtml(str) {
     if (!str) return "";
@@ -107,9 +110,85 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  // 1.5. Відображення плашки активних фільтрів із можливістю швидкого скидання
+  function renderActiveFilterBadges() {
+    if (!activeFiltersBadgeBar) return;
+    const badges = [];
+
+    const q = (filterSearch.value || "").trim();
+    if (q) {
+      badges.push(`
+        <span class="active-filter-pill">
+          Пошук: <strong>«${escapeHtml(q)}»</strong>
+          <button type="button" class="active-filter-remove" data-clear="search" title="Очистити пошук">&times;</button>
+        </span>
+      `);
+    }
+
+    const catId = filterCategory.value;
+    if (catId) {
+      const catName = categoriesMap.get(parseInt(catId, 10)) || `ID #${catId}`;
+      badges.push(`
+        <span class="active-filter-pill">
+          Категорія: <strong>${escapeHtml(catName)}</strong>
+          <button type="button" class="active-filter-remove" data-clear="category" title="Скинути фільтр за категорією">&times;</button>
+        </span>
+      `);
+    }
+
+    const monthVal = filterMonth && filterMonth.value ? filterMonth.value.trim() : "";
+    if (monthVal) {
+      badges.push(`
+        <span class="active-filter-pill" style="background-color: var(--color-primary-light); color: var(--color-primary); border-color: var(--color-primary);">
+          Місяць: <strong>${escapeHtml(monthVal)}</strong>
+          <button type="button" class="active-filter-remove" data-clear="month" title="Скинути фільтр за місяцем">&times;</button>
+        </span>
+      `);
+    }
+
+    if (badges.length === 0) {
+      activeFiltersBadgeBar.style.display = "none";
+      activeFiltersBadgeBar.innerHTML = "";
+    } else {
+      activeFiltersBadgeBar.style.display = "flex";
+      activeFiltersBadgeBar.innerHTML = `
+        <span style="font-size: 13px; font-weight: 600; color: var(--color-text-muted);">Активні фільтри:</span>
+        ${badges.join("")}
+        <button id="clearAllFiltersBadgeBtn" class="btn btn-outline btn-sm" style="padding: 2px 8px; font-size: 11px; margin-left: auto;">Скинути всі</button>
+      `;
+
+      activeFiltersBadgeBar.querySelectorAll(".active-filter-remove").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const clearType = btn.dataset.clear;
+          const url = new URL(window.location);
+          if (clearType === "search") {
+            filterSearch.value = "";
+          } else if (clearType === "category") {
+            filterCategory.value = "";
+            url.searchParams.delete("category_id");
+            history.replaceState(null, "", url.pathname + (url.search ? url.search : ""));
+          } else if (clearType === "month") {
+            if (filterMonth) filterMonth.value = "";
+            url.searchParams.delete("month");
+            history.replaceState(null, "", url.pathname + (url.search ? url.search : ""));
+          }
+          currentPage = 1;
+          loadExpenses();
+        });
+      });
+
+      const clearAllBtn = document.getElementById("clearAllFiltersBadgeBtn");
+      if (clearAllBtn) {
+        clearAllBtn.addEventListener("click", resetAllFilters);
+      }
+    }
+  }
+
   // 2. Завантаження та відображення списку витрат
   async function loadExpenses() {
     if (!tableBody) return;
+
+    renderActiveFilterBadges();
 
     tableBody.innerHTML = `
       <tr>
@@ -120,24 +199,49 @@ document.addEventListener("DOMContentLoaded", async () => {
       </tr>
     `;
 
+    const selectedMonth = (filterMonth && filterMonth.value ? filterMonth.value.trim() : "");
+    const q = (filterSearch.value || "").trim();
+    const catId = filterCategory.value;
+
     const params = {
-      limit: limit,
-      offset: (currentPage - 1) * limit,
       sort_by: filterSortBy.value || "spent_on",
       order: filterOrder.value || "desc"
     };
 
-    const q = (filterSearch.value || "").trim();
     if (q) params.q = q;
-
-    const catId = filterCategory.value;
     if (catId) params.category_id = parseInt(catId, 10);
+
+    if (selectedMonth) {
+      // При активному місяці завантажуємо повний пул витрат (до 100) для точної фільтрації
+      params.limit = 100;
+      params.offset = 0;
+    } else {
+      params.limit = limit;
+      params.offset = (currentPage - 1) * limit;
+    }
 
     try {
       const expenses = await Api.getExpenses(params);
-      currentExpensesList = Array.isArray(expenses) ? expenses : [];
-      renderExpensesTable(currentExpensesList);
-      updatePaginationControls(currentExpensesList.length);
+      const rawList = Array.isArray(expenses) ? expenses : [];
+
+      if (selectedMonth) {
+        allMonthFilteredExpenses = rawList.filter(
+          (exp) => exp.spent_on && exp.spent_on.startsWith(selectedMonth)
+        );
+        const totalCount = allMonthFilteredExpenses.length;
+        const totalPages = Math.max(1, Math.ceil(totalCount / limit));
+        if (currentPage > totalPages) currentPage = totalPages;
+
+        const start = (currentPage - 1) * limit;
+        currentExpensesList = allMonthFilteredExpenses.slice(start, start + limit);
+        renderExpensesTable(currentExpensesList);
+        updatePaginationControls(currentExpensesList.length, totalCount, selectedMonth);
+      } else {
+        allMonthFilteredExpenses = [];
+        currentExpensesList = rawList;
+        renderExpensesTable(currentExpensesList);
+        updatePaginationControls(currentExpensesList.length, null, null);
+      }
     } catch (err) {
       tableBody.innerHTML = `
         <tr>
@@ -221,24 +325,42 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  function updatePaginationControls(returnedCount) {
+  function updatePaginationControls(returnedCount, totalFilteredCount = null, monthFilter = null) {
     if (currentPageBadge) currentPageBadge.textContent = currentPage;
 
-    const startIdx = (currentPage - 1) * limit + 1;
-    const endIdx = (currentPage - 1) * limit + returnedCount;
+    if (monthFilter !== null && totalFilteredCount !== null) {
+      // Клієнтська пагінація за відфільтрованим місяцем
+      const startIdx = totalFilteredCount === 0 ? 0 : (currentPage - 1) * limit + 1;
+      const endIdx = Math.min((currentPage - 1) * limit + returnedCount, totalFilteredCount);
 
-    if (paginationInfo) {
-      if (returnedCount === 0 && currentPage === 1) {
-        paginationInfo.textContent = "0 записів";
-      } else if (returnedCount === 0) {
-        paginationInfo.textContent = `Сторінка ${currentPage} (порожня)`;
-      } else {
-        paginationInfo.textContent = `Показано ${startIdx}–${endIdx} записів`;
+      if (paginationInfo) {
+        if (totalFilteredCount === 0) {
+          paginationInfo.textContent = `0 записів за ${monthFilter}`;
+        } else {
+          paginationInfo.textContent = `Показано ${startIdx}–${endIdx} із ${totalFilteredCount} витрат за ${monthFilter}`;
+        }
       }
-    }
 
-    if (prevPageBtn) prevPageBtn.disabled = currentPage <= 1;
-    if (nextPageBtn) nextPageBtn.disabled = returnedCount < limit;
+      if (prevPageBtn) prevPageBtn.disabled = currentPage <= 1;
+      if (nextPageBtn) nextPageBtn.disabled = endIdx >= totalFilteredCount;
+    } else {
+      // Серверна пагінація
+      const startIdx = (currentPage - 1) * limit + 1;
+      const endIdx = (currentPage - 1) * limit + returnedCount;
+
+      if (paginationInfo) {
+        if (returnedCount === 0 && currentPage === 1) {
+          paginationInfo.textContent = "0 записів";
+        } else if (returnedCount === 0) {
+          paginationInfo.textContent = `Сторінка ${currentPage} (порожня)`;
+        } else {
+          paginationInfo.textContent = `Показано ${startIdx}–${endIdx} записів`;
+        }
+      }
+
+      if (prevPageBtn) prevPageBtn.disabled = currentPage <= 1;
+      if (nextPageBtn) nextPageBtn.disabled = returnedCount < limit;
+    }
   }
 
   // 3. Обробники подій для фільтрів
@@ -255,6 +377,27 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (filterCategory) {
     filterCategory.addEventListener("change", () => {
       currentPage = 1;
+      const url = new URL(window.location);
+      if (filterCategory.value) {
+        url.searchParams.set("category_id", filterCategory.value);
+      } else {
+        url.searchParams.delete("category_id");
+      }
+      history.replaceState(null, "", url.pathname + (url.search ? url.search : ""));
+      loadExpenses();
+    });
+  }
+
+  if (filterMonth) {
+    filterMonth.addEventListener("change", () => {
+      currentPage = 1;
+      const url = new URL(window.location);
+      if (filterMonth.value) {
+        url.searchParams.set("month", filterMonth.value);
+      } else {
+        url.searchParams.delete("month");
+      }
+      history.replaceState(null, "", url.pathname + (url.search ? url.search : ""));
       loadExpenses();
     });
   }
@@ -273,15 +416,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  function resetAllFilters() {
+    filterSearch.value = "";
+    filterCategory.value = "";
+    if (filterMonth) filterMonth.value = "";
+    filterSortBy.value = "spent_on";
+    filterOrder.value = "desc";
+    history.replaceState(null, "", "expenses.html");
+    currentPage = 1;
+    loadExpenses();
+  }
+
   if (resetFiltersBtn) {
-    resetFiltersBtn.addEventListener("click", () => {
-      filterSearch.value = "";
-      filterCategory.value = "";
-      filterSortBy.value = "spent_on";
-      filterOrder.value = "desc";
-      currentPage = 1;
-      loadExpenses();
-    });
+    resetFiltersBtn.addEventListener("click", resetAllFilters);
   }
 
   // 4. Пагінація
@@ -289,15 +436,32 @@ document.addEventListener("DOMContentLoaded", async () => {
     prevPageBtn.addEventListener("click", () => {
       if (currentPage > 1) {
         currentPage--;
-        loadExpenses();
+        if (allMonthFilteredExpenses.length > 0) {
+          const start = (currentPage - 1) * limit;
+          currentExpensesList = allMonthFilteredExpenses.slice(start, start + limit);
+          renderExpensesTable(currentExpensesList);
+          updatePaginationControls(currentExpensesList.length, allMonthFilteredExpenses.length, filterMonth.value);
+        } else {
+          loadExpenses();
+        }
       }
     });
   }
 
   if (nextPageBtn) {
     nextPageBtn.addEventListener("click", () => {
-      currentPage++;
-      loadExpenses();
+      if (allMonthFilteredExpenses.length > 0) {
+        if (currentPage * limit < allMonthFilteredExpenses.length) {
+          currentPage++;
+          const start = (currentPage - 1) * limit;
+          currentExpensesList = allMonthFilteredExpenses.slice(start, start + limit);
+          renderExpensesTable(currentExpensesList);
+          updatePaginationControls(currentExpensesList.length, allMonthFilteredExpenses.length, filterMonth.value);
+        }
+      } else {
+        currentPage++;
+        loadExpenses();
+      }
     });
   }
 
@@ -482,5 +646,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Початкове завантаження
   await loadCategories();
+
+  // 8. Перевірка query-параметрів (перехід по кліку з діаграм або таблиць)
+  const urlParams = new URLSearchParams(window.location.search);
+  const catParam = urlParams.get("category_id");
+  if (catParam && filterCategory) {
+    filterCategory.value = catParam;
+  }
+  const monthParam = urlParams.get("month");
+  if (monthParam && filterMonth) {
+    filterMonth.value = monthParam;
+  }
+
   await loadExpenses();
 });

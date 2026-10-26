@@ -1,37 +1,42 @@
 :root {
-  /* Головна палітра згідно з вимогами mission.md */
-  --color-primary: #D97724;        /* Помаранчевий (акценти, головні кнопки) */
-  --color-primary-hover: #BF6317;
-  --color-primary-light: #FDF3E7;
-  --color-secondary: #E8B547;      /* Темно-жовтий */
-  --color-secondary-hover: #D4A034;
-  --color-secondary-light: #FBF6E9;
-  --color-bg: #FFF8EC;             /* Кремовий фон */
-  --color-card-bg: #FFFFFF;        /* Білий для карток */
-  --color-text: #392719;           /* Темний текст */
-  --color-text-muted: #7A6657;     /* Приглушений текст */
-  --color-text-light: #9F8B7D;
-  --color-accent-blue: #2563A6;    /* Контрастний синій для посилань/дій */
-  --color-accent-blue-hover: #1C4D82;
-  --color-accent-blue-light: #EBF3FC;
+  /* Темно-зелена фінтех-палітра з золотим комплементарним контрастом (суворо в PX) */
+  --color-primary: #0D7A53;          /* Насичений смарагдовий зелений (головні кнопки, акценти) */
+  --color-primary-hover: #095C3E;
+  --color-primary-light: #ECFDF5;
+  --color-primary-border: #A7F3D0;
+
+  --color-brand-navy: #0F392B;       /* Глибокий хвойний темно-зелений для бренду та шапки */
+  --color-secondary: #D97706;        /* Комплементарний теплий янтар/золото (за правилами колористики) */
+  --color-secondary-hover: #B45309;
+  --color-secondary-light: #FEF3C7;
+
+  --color-bg: #F4F9F6;               /* Свіжий кришталевий фон з легким м'ятним відтінком */
+  --color-card-bg: #FFFFFF;          /* Чистий білий для карток */
+  --color-text: #0D2018;             /* Глибокий лісовий темний текст */
+  --color-text-muted: #4B6358;       /* Шавлієвий приглушений текст */
+  --color-text-light: #7E968C;
+
+  --color-accent-blue: #0D7A53;      /* Акценти та активні пункти */
+  --color-accent-blue-hover: #095C3E;
+  --color-accent-blue-light: #ECFDF5;
 
   /* Системні кольори */
-  --color-success: #2E7D32;        /* Зелений для успіху */
-  --color-success-bg: #E8F5E9;
-  --color-success-border: #A5D6A7;
-  --color-danger: #C62828;         /* Червоний для помилок/видалення */
-  --color-danger-hover: #A71D1D;
-  --color-danger-bg: #FFEBEE;
-  --color-danger-border: #FFCDD2;
-  --color-warning: #D97706;        /* Попередження */
+  --color-success: #16A34A;          /* Зелений успіху */
+  --color-success-bg: #ECFDF5;
+  --color-success-border: #A7F3D0;
+  --color-danger: #DC2626;           /* Червоний помилок та видалення */
+  --color-danger-hover: #B91C1C;
+  --color-danger-bg: #FEF2F2;
+  --color-danger-border: #FECACA;
+  --color-warning: #D97706;          /* Попередження */
   --color-warning-bg: #FEF3C7;
   --color-warning-border: #FDE68A;
 
   /* Межі та розділювачі */
-  --color-border: #E8DFC8;
-  --color-border-subtle: #F3ECE0;
+  --color-border: #D8E7E0;
+  --color-border-subtle: #EDF5F1;
 
-  /* Шрифти та типографіка (всі розміри суворо в PX) */
+  /* Шрифти та типографіка */
   --font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-size-xs: 12px;
   --font-size-sm: 14px;
@@ -48,9 +53,9 @@
   --radius-full: 9999px;
 
   /* Тіні */
-  --shadow-sm: 0 1px 3px rgba(57, 39, 25, 0.06);
-  --shadow-md: 0 4px 14px rgba(57, 39, 25, 0.08);
-  --shadow-lg: 0 12px 28px rgba(57, 39, 25, 0.12);
+  --shadow-sm: 0 1px 3px rgba(15, 57, 43, 0.05);
+  --shadow-md: 0 4px 14px rgba(15, 57, 43, 0.06);
+  --shadow-lg: 0 12px 28px rgba(15, 57, 43, 0.1);
 
   /* Анімації */
   --transition-fast: 0.15s ease;

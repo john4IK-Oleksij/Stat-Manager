@@ -16,6 +16,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const editNameError = document.getElementById("editCategoryError");
   const editSaveBtn = document.getElementById("saveEditCategoryBtn");
 
+  let expensesCountMap = new Map();
+
   function escapeHtml(str) {
     if (!str) return "";
     return String(str)
@@ -26,7 +28,13 @@ document.addEventListener("DOMContentLoaded", () => {
       .replace(/'/g, "&#039;");
   }
 
-  // Завантаження списку категорій
+  function getCountLabel(count) {
+    if (count === 1) return "1 витрата";
+    if (count >= 2 && count <= 4) return `${count} витрати`;
+    return `${count} витрат`;
+  }
+
+  // Завантаження категорій та статистики прив'язаних витрат
   async function loadCategories() {
     if (!container) return;
 
@@ -38,7 +46,17 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
 
     try {
-      const categories = await Api.getCategories();
+      // Отримуємо категорії та кількість витрат у кожній
+      const [categories, stats] = await Promise.all([
+        Api.getCategories(),
+        Api.getStatsByCategory(0).catch(() => [])
+      ]);
+
+      expensesCountMap.clear();
+      if (Array.isArray(stats)) {
+        stats.forEach((st) => expensesCountMap.set(st.id, Number(st.expenses_count) || 0));
+      }
+
       renderCategories(categories);
     } catch (err) {
       container.innerHTML = `
@@ -55,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Відображення списку категорій
+  // Відображення списку категорій у вигляді grid-сітки
   function renderCategories(categories) {
     if (!container) return;
 
@@ -90,10 +108,14 @@ document.addEventListener("DOMContentLoaded", () => {
       card.className = "category-card";
       card.dataset.id = cat.id;
 
+      const count = expensesCountMap.get(cat.id) || 0;
+      const countLabel = getCountLabel(count);
+      const countBadgeClass = count > 0 ? "badge-category" : "badge-info";
+
       card.innerHTML = `
         <div class="category-card-header">
           <span class="category-name">${escapeHtml(cat.name)}</span>
-          <span class="badge badge-info">ID: ${cat.id}</span>
+          <span class="badge ${countBadgeClass}">${countLabel}</span>
         </div>
         <div class="category-card-actions">
           <button class="btn btn-outline btn-sm btn-edit" data-id="${cat.id}" data-name="${escapeHtml(cat.name)}" title="Перейменувати">
@@ -103,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </svg>
             Редагувати
           </button>
-          <button class="btn btn-danger btn-sm btn-delete" data-id="${cat.id}" data-name="${escapeHtml(cat.name)}" title="Видалити категорію">
+          <button class="btn btn-danger btn-sm btn-delete" data-id="${cat.id}" data-name="${escapeHtml(cat.name)}" data-count="${count}" title="Видалити категорію">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="3 6 5 6 21 6"></polyline>
               <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -119,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
     container.innerHTML = "";
     container.appendChild(grid);
 
-    // Додавання обробників подій на кнопки карток
+    // Обробники на кнопки карток
     grid.querySelectorAll(".btn-edit").forEach((btn) => {
       btn.addEventListener("click", () => {
         openEditModal(btn.dataset.id, btn.dataset.name);
@@ -128,7 +150,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     grid.querySelectorAll(".btn-delete").forEach((btn) => {
       btn.addEventListener("click", () => {
-        confirmDeleteCategory(btn.dataset.id, btn.dataset.name);
+        const count = parseInt(btn.dataset.count, 10) || 0;
+        confirmDeleteCategory(btn.dataset.id, btn.dataset.name, count);
       });
     });
   }
@@ -257,8 +280,19 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 3. Видалення категорії з підтвердженням
-  function confirmDeleteCategory(id, name) {
+  // 3. Видалення категорії (перевірка зайнятості та захист від видалення)
+  function confirmDeleteCategory(id, name, count) {
+    // Якщо категорія зайнята витратами — одразу показуємо зрозуміле попередження без марного діалогу
+    if (count > 0) {
+      Modal.showError({
+        title: "Заборонено видаляти",
+        message: `Категорія «${name}» зараз містить ${getCountLabel(count)}. Сервер не дозволяє видаляти категорію, до якої прив'язані записи витрат. Спочатку видаліть або змініть ці витрати.`,
+        code: 409
+      });
+      return;
+    }
+
+    // Якщо категорія вільна (0 витрат) — запитуємо підтвердження
     Modal.showConfirm({
       title: "Видалення категорії",
       message: `Видалити категорію «${name}»? Цю дію не можна скасувати.`,
@@ -273,7 +307,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if (err.status === 409) {
             Modal.showError({
               title: "Заборонено видаляти",
-              message: "Ця категорія містить прив'язані витрати і не може бути видалена. Спочатку змініть категорію або видаліть пов'язані з нею витрати.",
+              message: "Ця категорія використовується у витратах і не може бути видалена.",
               code: 409
             });
           } else {

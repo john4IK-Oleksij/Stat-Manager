@@ -32,14 +32,22 @@
   align-items: center;
   gap: 12px;
   font-size: var(--font-size-xl);
-  font-weight: 800;
-  color: var(--color-primary);
+  font-weight: 600;
+  color: var(--color-brand-navy);
   text-decoration: none;
 }
 
 .header-brand:hover {
   text-decoration: none;
-  color: var(--color-primary-hover);
+  color: var(--color-primary);
+}
+
+.header-logo-img {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  box-shadow: 0 1px 3px rgba(15, 39, 68, 0.2);
 }
 
 .header-logo-icon {
@@ -108,15 +116,15 @@
 }
 
 .nav-link:hover {
-  color: var(--color-primary);
-  background-color: var(--color-primary-light);
+  color: var(--color-accent-blue);
+  background-color: var(--color-accent-blue-light);
   text-decoration: none;
 }
 
 .nav-link.active {
-  color: var(--color-primary);
-  background-color: var(--color-primary-light);
-  font-weight: 700;
+  color: var(--color-accent-blue);
+  background-color: var(--color-accent-blue-light);
+  font-weight: 600;
 }
 
 /* Burger Button */
@@ -190,15 +198,16 @@
 }
 
 .mobile-nav-link:hover {
-  background-color: var(--color-primary-light);
-  color: var(--color-primary);
+  background-color: var(--color-accent-blue-light);
+  color: var(--color-accent-blue);
   text-decoration: none;
 }
 
 .mobile-nav-link.active {
-  background-color: var(--color-primary-light);
-  color: var(--color-primary);
-  border-color: var(--color-border);
+  background-color: var(--color-accent-blue-light);
+  color: var(--color-accent-blue);
+  border-color: rgba(37, 99, 166, 0.25);
+  font-weight: 600;
 }
 
 /* Mobile backdrop */
@@ -354,7 +363,8 @@
     font-size: 15px;
   }
 
-  .header-logo-icon {
+  .header-logo-icon,
+  .header-logo-img {
     width: 28px;
     height: 28px;
   }

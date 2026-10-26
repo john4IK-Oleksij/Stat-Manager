@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Візуальне порівняння палітри: Темно-зелена + Золотий контраст</title>
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #F4F9F6;
+      color: #0D2018;
+      padding: 40px 20px;
+    }
+    .preview-container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #0F392B;
+    }
+    .subtitle {
+      color: #4B6358;
+      margin-bottom: 32px;
+      font-size: 15px;
+    }
+    .swatches-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .swatch-card {
+      background: #FFFFFF;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(15, 57, 43, 0.06);
+      border: 1px solid #D8E7E0;
+    }
+    .swatch-color {
+      height: 100px;
+      width: 100%;
+    }
+    .swatch-info {
+      padding: 12px;
+    }
+    .swatch-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0D2018;
+      margin-bottom: 4px;
+    }
+    .swatch-hex {
+      font-size: 13px;
+      font-family: monospace;
+      color: #4B6358;
+    }
+    .swatch-role {
+      font-size: 11px;
+      color: #6B877B;
+      margin-top: 4px;
+    }
+
+    /* Демонстраційний макет інтерфейсу */
+    .mockup-card {
+      background: #F4F9F6;
+      border-radius: 16px;
+      border: 1px solid #D8E7E0;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(15, 57, 43, 0.08);
+      margin-bottom: 40px;
+    }
+    .mockup-header {
+      background: #FFFFFF;
+      border-bottom: 1px solid #D8E7E0;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .mockup-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #0F392B;
+    }
+    .mockup-logo-img {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+    .mockup-nav {
+      display: flex;
+      gap: 8px;
+    }
+    .mockup-nav-item {
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #4B6358;
+    }
+    .mockup-nav-item.active {
+      background: #ECFDF5;
+      color: #0D7A53;
+      border: 1px solid #A7F3D0;
+    }
+
+    .mockup-body {
+      padding: 24px;
+    }
+    .mockup-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .mockup-title {
+      font-size: 22px;
+      font-weight: 600;
+      color: #0D2018;
+    }
+    .btn-demo-primary {
+      background: #0D7A53;
+      color: #FFFFFF;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(13, 122, 83, 0.25);
+    }
+    .mockup-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .mockup-kpi {
+      background: #FFFFFF;
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid #D8E7E0;
+      box-shadow: 0 1px 3px rgba(15, 57, 43, 0.04);
+    }
+    .mockup-kpi-label {
+      font-size: 13px;
+      color: #4B6358;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    .mockup-kpi-value {
+      font-size: 22px;
+      font-weight: 600;
+      color: #0D2018;
+    }
+
+    .mockup-table-card {
+      background: #FFFFFF;
+      border-radius: 12px;
+      border: 1px solid #D8E7E0;
+      overflow: hidden;
+    }
+    .mockup-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .mockup-table th {
+      background: #F8FCFA;
+      padding: 10px 16px;
+      text-align: left;
+      color: #4B6358;
+      font-weight: 600;
+      border-bottom: 1px solid #D8E7E0;
+    }
+    .mockup-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #F1F7F4;
+      color: #0D2018;
+    }
+    .badge-demo {
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #ECFDF5;
+      color: #0D7A53;
+      border: 1px solid #A7F3D0;
+    }
+    .badge-contrast-gold {
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #FEF3C7;
+      color: #B45309;
+      border: 1px solid #FDE68A;
+    }
+  </style>
+</head>
+<body>
+  <div class="preview-container">
+    <h1>🌲 Темно-зелена палітра (Forest Emerald & Warm Gold)</h1>
+    <p class="subtitle">Розроблена за класичними правилами колористики: благородний смарагдовий зелений як основа фінансів та теплий янтарно-золотий як комплементарний контраст</p>
+
+    <!-- Слайди з кольоровими блоками -->
+    <div class="swatches-grid">
+      <!-- 1. Deep Forest Brand -->
+      <div class="swatch-card">
+        <div class="swatch-color" style="background-color: #0F392B;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Forest Brand</div>
+          <div class="swatch-hex">#0F392B</div>
+          <div class="swatch-role">Глибокий темно-зелений для лого та шапки</div>
+        </div>
+      </div>
+
+      <!-- 2. Emerald Action Green -->
+      <div class="swatch-card">
+        <div class="swatch-color" style="background-color: #0D7A53;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Emerald Action</div>
+          <div class="swatch-hex">#0D7A53</div>
+          <div class="swatch-role">Основні кнопки («+ Додати витрату», «Зберегти»)</div>
+        </div>
+      </div>
+
+      <!-- 3. Contrast Gold / Amber (Колористичний контраст) -->
+      <div class="swatch-card">
+        <div class="swatch-color" style="background-color: #D97706;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Contrast Gold/Amber</div>
+          <div class="swatch-hex">#D97706</div>
+          <div class="swatch-role">Контрастні акценти, графіки, важливі мітки</div>
+        </div>
+      </div>
+
+      <!-- 4. Fresh Mint-White BG -->
+      <div class="swatch-card">
+        <div class="swatch-color" style="background-color: #F4F9F6; border-bottom: 1px solid #D8E7E0;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Mint Mist BG</div>
+          <div class="swatch-hex">#F4F9F6</div>
+          <div class="swatch-role">Кришталево свіжий фон сторінок</div>
+        </div>
+      </div>
+
+      <!-- 5. Deep Forest Text -->
+      <div class="swatch-card">
+        <div class="swatch-color" style="background-color: #0D2018;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Deep Forest Text</div>
+          <div class="swatch-hex">#0D2018</div>
+          <div class="swatch-role">Контрастний текст і суми</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Живий макет інтерфейсу з логотипом -->
+    <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 14px; color: #0F392B;">
+      Як виглядатиме інтерфейс у темно-зеленій палітрі:
+    </h2>
+
+    <div class="mockup-card">
+      <!-- Шапка -->
+      <div class="mockup-header">
+        <div class="mockup-brand">
+          <img src="assets/logo.png" alt="Logo" class="mockup-logo-img">
+          <span>Expense Tracker</span>
+        </div>
+        <div class="mockup-nav">
+          <span class="mockup-nav-item active">Огляд</span>
+          <span class="mockup-nav-item">Витрати</span>
+          <span class="mockup-nav-item">Категорії</span>
+          <span class="mockup-nav-item">Статистика</span>
+        </div>
+      </div>
+
+      <!-- Тіло сторінки -->
+      <div class="mockup-body">
+        <div class="mockup-top-bar">
+          <div>
+            <div class="mockup-title">Огляд витрат</div>
+            <div style="font-size: 13px; color: #4B6358;">Загальне зведення фінансів та останні витрати</div>
+          </div>
+          <button class="btn-demo-primary">+ Додати витрату</button>
+        </div>
+
+        <!-- KPI картки -->
+        <div class="mockup-kpi-grid">
+          <div class="mockup-kpi">
+            <div class="mockup-kpi-label">Загальна сума</div>
+            <div class="mockup-kpi-value">1 516,00 ₴</div>
+          </div>
+          <div class="mockup-kpi">
+            <div class="mockup-kpi-label">Кількість витрат</div>
+            <div class="mockup-kpi-value">7</div>
+          </div>
+          <div class="mockup-kpi">
+            <div class="mockup-kpi-label">Середня витрата</div>
+            <div class="mockup-kpi-value">216,57 ₴</div>
+          </div>
+        </div>
+
+        <!-- Таблиця -->
+        <div class="mockup-table-card">
+          <table class="mockup-table">
+            <thead>
+              <tr>
+                <th>Дата</th>
+                <th>Назва</th>
+                <th>Категорія</th>
+                <th style="text-align: right;">Сума</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>25.10.2026</td>
+                <td style="font-weight: 600;">Кава та круасан</td>
+                <td><span class="badge-demo">Їжа</span></td>
+                <td style="text-align: right; font-weight: 600;">120,00 ₴</td>
+              </tr>
+              <tr>
+                <td>24.10.2026</td>
+                <td style="font-weight: 600;">Заправка WOG</td>
+                <td><span class="badge-contrast-gold">Транспорт (Контраст)</span></td>
+                <td style="text-align: right; font-weight: 600;">800,00 ₴</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

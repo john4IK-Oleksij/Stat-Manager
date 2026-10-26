@@ -80,12 +80,19 @@ document.addEventListener("DOMContentLoaded", async () => {
       categoryTableBody.innerHTML = "";
       stats.forEach((item) => {
         const tr = document.createElement("tr");
+        tr.style.cursor = "pointer";
+        tr.title = `Клікніть, щоб переглянути витрати категорії «${escapeHtml(item.name)}»`;
         tr.innerHTML = `
-          <td style="font-weight: 600;">${escapeHtml(item.name)}</td>
+          <td style="font-weight: 600; color: var(--color-primary);">${escapeHtml(item.name)}</td>
           <td style="text-align: center; font-variant-numeric: tabular-nums;">${item.expenses_count}</td>
           <td class="col-amount">${formatMoney(item.total_amount)}</td>
           <td class="col-amount" style="color: var(--color-text-muted);">${formatMoney(item.avg_amount || 0)}</td>
         `;
+        tr.addEventListener("click", () => {
+          if (item.id) {
+            window.location.href = `expenses.html?category_id=${item.id}`;
+          }
+        });
         categoryTableBody.appendChild(tr);
       });
     } catch (err) {
@@ -128,11 +135,18 @@ document.addEventListener("DOMContentLoaded", async () => {
       monthTableBody.innerHTML = "";
       stats.forEach((item) => {
         const tr = document.createElement("tr");
+        tr.style.cursor = "pointer";
+        tr.title = `Клікніть, щоб переглянути витрати за ${escapeHtml(item.month)}`;
         tr.innerHTML = `
-          <td style="font-weight: 600; font-variant-numeric: tabular-nums;">${escapeHtml(item.month)}</td>
+          <td style="font-weight: 600; font-variant-numeric: tabular-nums; color: var(--color-primary);">${escapeHtml(item.month)}</td>
           <td style="text-align: center; font-variant-numeric: tabular-nums;">${item.expenses_count}</td>
           <td class="col-amount">${formatMoney(item.total_amount)}</td>
         `;
+        tr.addEventListener("click", () => {
+          if (item.month) {
+            window.location.href = `expenses.html?month=${encodeURIComponent(item.month)}`;
+          }
+        });
         monthTableBody.appendChild(tr);
       });
     } catch (err) {
