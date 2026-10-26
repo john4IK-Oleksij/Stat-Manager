@@ -151,7 +151,9 @@
   height: 3px;
   background-color: var(--color-text);
   border-radius: 2px;
-  transition: transform var(--transition-normal), opacity var(--transition-fast);
+  transition:
+    transform var(--transition-normal),
+    opacity var(--transition-fast);
 }
 
 .burger-btn.open .burger-line:nth-child(1) {
@@ -249,7 +251,8 @@
 
 .page-subtitle {
   color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-base);
+  font-weight: 600;
 }
 
 /* Common Layout Grids */
@@ -352,7 +355,7 @@
   .kpi-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .header-brand {
     font-size: 16px;
     gap: 8px;
