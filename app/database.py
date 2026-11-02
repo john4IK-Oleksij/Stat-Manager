@@ -1,5 +1,6 @@
 from collections.abc import Iterator
-from pathlib import Path
+
+# from pathlib import Path
 from typing import Annotated
 
 from fastapi import Depends, Request
@@ -29,8 +30,8 @@ def create_pool(settings: Settings) -> MySQLConnectionPool:
         user=settings.user,
         password=settings.password.get_secret_value(),
         database=settings.database,
-        ssl_ca=str(Path(__file__).resolve().parent.parent / "ca.pem"),
-        ssl_verify_cert=True,
+        # ssl_ca=str(Path(__file__).resolve().parent.parent / "ca.pem"),
+        ssl_verify_cert=False,
         charset="utf8mb4",
         collation="utf8mb4_unicode_ci",
         autocommit=False,
