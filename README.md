@@ -1,4 +1,5 @@
-https://lovely-vision-production-b45f.up.railway.app/index.html
+Deploy : https://stat-manager.up.railway.app/index.html
+Deploy (Render) : https://stat-manager.onrender.com/index.html
 
 # 📊 Expense Tracker (Stat Manager)
 
